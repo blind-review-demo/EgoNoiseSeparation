@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EgoGraph: Self-Anchored Graph Propagation for Annotation-Free Separator Adaptation in Legged Robot Audition</title>
+    <link rel="stylesheet" href="style.css?v=20260819-video-poster" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__inner">
+        <p class="eyebrow">Project Page</p>
+        <h1>EgoGraph: Self-Anchored Graph Propagation for Annotation-Free Separator Adaptation in Legged Robot Audition</h1>
+        <nav class="hero__links" aria-label="Project resources">
+          <a href="https://github.com/blind-review-demo/Learning2HearWhileWalking">Code</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="section section--examples" aria-labelledby="examplesTitle">
+        <div class="section__copy">
+          <h2 id="examplesTitle">Examples</h2>
+        </div>
+        <div class="video-grid">
+          <figure class="media-figure">
+            <video
+              controls
+              preload="none"
+              playsinline
+              poster="assets/posters/G1_egonoise.jpg"
+              src="assets/G1_egonoise.mp4"
+            ></video>
+            <figcaption>Example of ego-noise recorded by a humanoid robot, Unitree G1.</figcaption>
+          </figure>
+          <figure class="media-figure">
+            <video
+              controls
+              preload="none"
+              playsinline
+              poster="assets/posters/go1_egonoise.jpg"
+              src="assets/go1_egonoise.mp4"
+            ></video>
+            <figcaption>Example of ego-noise recorded by a quadruped robot, Unitree Go1.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section section--real-demo" aria-labelledby="realDemoTitle">
+        <div class="section__copy">
+          <h2 id="realDemoTitle">Real-World Video Demo</h2>
+          <div class="real-demo__notice" role="note">
+            <strong>Important setup:</strong>
+            The audio in these videos was recorded by microphones mounted on the robot.
+            Environmental sounds were played from an external speaker during robot operation.
+          </div>
+        </div>
+        <div id="realExpDemo" class="real-demo"></div>
+      </section>
+
+      <section class="section section--legend" aria-labelledby="demoLegendTitle">
+        <div>
+          <h2 id="demoLegendTitle">Demo</h2>
+          <p>Each example shows references first, followed by separated target estimates from each method.</p>
+          <p class="score-note">
+            CLAP Score is the CLAP audio embedding cosine similarity between the target and the
+            separated estimate. SAJ Score is the overall separation judgment score. Higher is better.
+          </p>
+        </div>
+        <figure class="colorbar">
+          <img id="colorbarImage" alt="Spectrogram color scale" />
+          <figcaption id="colorbarCaption"></figcaption>
+        </figure>
+      </section>
+
+      <div id="samples" class="samples"></div>
+    </main>
+
+    <footer>
+      <section class="attributions" aria-label="Dataset attributions">
+        <h2>Dataset Attributions</h2>
+        <p>
+          Audio examples are redistributed as short audio clips under the licenses listed below.
+        </p>
+        <div class="attributions__table-wrap">
+          <table class="attributions__table">
+            <thead>
+              <tr>
+                <th>Sample</th>
+                <th>Category</th>
+                <th>Source Dataset</th>
+                <th>License</th>
+              </tr>
+            </thead>
+            <tbody id="attributionRows"></tbody>
+          </table>
+        </div>
+      </section>
+      <p>Generated from the current experiment outputs.</p>
+    </footer>
+
+    <script src="script.js?v=20260819-demo-selection"></script>
+  </body>
+</html>
