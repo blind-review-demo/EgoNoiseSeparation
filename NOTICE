@@ -1,0 +1,5 @@
+Attribution Notice: Learning2HearWhileWalking contributors.
+
+Learning2HearWhileWalking provides the Transfer-DiT code used for
+research use. It depends on Meta's SAM-Audio code and model weights, which are
+not included in this repository and remain subject to their own license terms.
