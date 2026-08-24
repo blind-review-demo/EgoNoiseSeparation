@@ -4,6 +4,8 @@ This repository contains the public RecurGraph and Transfer-DiT implementations
 used for ego-noise separation while walking. It does not vendor PE-AV or
 SAM-Audio source code or model weights.
 
+Project page: https://blind-review-demo.github.io/EgoNoiseSeparation/
+
 ## What is included
 
 - `learning2hear.run_recurgraph`: recurrence-guided seed initialization and
