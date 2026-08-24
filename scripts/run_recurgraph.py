@@ -11,13 +11,13 @@ import numpy as np
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from learning2hear import EgoGraphConfig, run_egograph
+from learning2hear import RecurGraphConfig, run_recurgraph
 
 
 def parse_args() -> argparse.Namespace:
-    defaults = EgoGraphConfig()
+    defaults = RecurGraphConfig()
     parser = argparse.ArgumentParser(
-        description="Run EgoGraph on precomputed PE-AV audio embeddings."
+        description="Run RecurGraph on precomputed PE-AV audio embeddings."
     )
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--embeddings", type=Path, required=True)
@@ -50,7 +50,7 @@ def main() -> None:
             f"Manifest/embedding row mismatch: {len(rows)} != {len(embeddings)}"
         )
 
-    config = EgoGraphConfig(
+    config = RecurGraphConfig(
         seed_ratio=args.seed_ratio,
         pca_dim=args.pca_dim,
         n_neighbors=args.n_neighbors,
@@ -64,14 +64,14 @@ def main() -> None:
     summaries = {}
     fieldnames = [
         *rows[0].keys(),
-        "self_anchor_similarity",
+        "embedding_centroid_similarity",
         "seed_label",
         "ego_noise_dominant_score",
         "selected_for_training",
     ]
     for group, indices_list in sorted(grouped_indices.items()):
         indices = np.asarray(indices_list, dtype=np.int64)
-        result = run_egograph(embeddings[indices], config)
+        result = run_recurgraph(embeddings[indices], config)
         summaries[group] = {
             "samples": len(indices),
             "selected_for_training": int(np.sum(result.selected)),
@@ -80,8 +80,8 @@ def main() -> None:
         for local_index, global_index in enumerate(indices):
             rows[int(global_index)].update(
                 {
-                    "self_anchor_similarity": repr(
-                        float(result.anchor_similarities[local_index])
+                    "embedding_centroid_similarity": repr(
+                        float(result.centroid_similarities[local_index])
                     ),
                     "seed_label": str(int(result.seed_labels[local_index])),
                     "ego_noise_dominant_score": repr(

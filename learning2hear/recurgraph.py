@@ -9,7 +9,7 @@ from sklearn.decomposition import PCA
 from sklearn.exceptions import ConvergenceWarning
 from sklearn.semi_supervised import LabelSpreading as _GraphPropagator
 
-from learning2hear.config import EgoGraphSettings
+from learning2hear.config import RecurGraphSettings
 
 
 def l2_normalize(array: np.ndarray, axis: int = -1) -> np.ndarray:
@@ -19,28 +19,28 @@ def l2_normalize(array: np.ndarray, axis: int = -1) -> np.ndarray:
 
 
 @dataclass(frozen=True)
-class EgoGraphConfig:
-    """Configuration used for the paper's EgoGraph experiments."""
+class RecurGraphConfig:
+    """Configuration used for the paper's RecurGraph experiments."""
 
-    pca_dim: int = EgoGraphSettings.pca_dim
-    pca_random_state: int = EgoGraphSettings.pca_random_state
-    seed_ratio: float = EgoGraphSettings.seed_ratio
-    n_neighbors: int = EgoGraphSettings.n_neighbors
-    alpha: float = EgoGraphSettings.alpha
-    max_iter: int = EgoGraphSettings.max_iter
-    tol: float = EgoGraphSettings.tol
-    n_jobs: int = EgoGraphSettings.n_jobs
-    selection_threshold: float = EgoGraphSettings.selection_threshold
+    pca_dim: int = RecurGraphSettings.pca_dim
+    pca_random_state: int = RecurGraphSettings.pca_random_state
+    seed_ratio: float = RecurGraphSettings.seed_ratio
+    n_neighbors: int = RecurGraphSettings.n_neighbors
+    alpha: float = RecurGraphSettings.alpha
+    max_iter: int = RecurGraphSettings.max_iter
+    tol: float = RecurGraphSettings.tol
+    n_jobs: int = RecurGraphSettings.n_jobs
+    selection_threshold: float = RecurGraphSettings.selection_threshold
 
 
 @dataclass(frozen=True)
-class EgoGraphResult:
+class RecurGraphResult:
     scores: np.ndarray
     selected: np.ndarray
     seed_labels: np.ndarray
-    anchor_similarities: np.ndarray
+    centroid_similarities: np.ndarray
     class_probabilities: np.ndarray
-    self_anchor: np.ndarray
+    embedding_centroid: np.ndarray
     diagnostics: dict[str, Any]
 
 
@@ -56,13 +56,13 @@ def _validate_embeddings(audio_embeddings: np.ndarray) -> np.ndarray:
     return l2_normalize(embeddings, axis=1)
 
 
-def self_anchor(audio_embeddings: np.ndarray) -> np.ndarray:
+def embedding_centroid(audio_embeddings: np.ndarray) -> np.ndarray:
     """Return the normalized mean of a robot's adaptation-clip embeddings."""
 
     embeddings = _validate_embeddings(audio_embeddings)
     anchor = np.mean(embeddings, axis=0, keepdims=True)
     if float(np.linalg.norm(anchor)) <= np.finfo(np.float32).eps:
-        raise ValueError("The self-anchor has zero norm")
+        raise ValueError("The embedding centroid has zero norm")
     return l2_normalize(anchor, axis=1)[0]
 
 
@@ -87,10 +87,10 @@ def _seed_labels(
 
 def _graph_features(
     embeddings: np.ndarray,
-    anchor: np.ndarray,
-    config: EgoGraphConfig,
+    centroid: np.ndarray,
+    config: RecurGraphConfig,
 ) -> np.ndarray:
-    combined = np.concatenate([embeddings, anchor[None, :]], axis=0)
+    combined = np.concatenate([embeddings, centroid[None, :]], axis=0)
     dimension = min(
         int(config.pca_dim),
         combined.shape[0] - 1,
@@ -105,10 +105,10 @@ def _graph_features(
     return l2_normalize(projected[:-1], axis=1)
 
 
-def run_egograph(
+def run_recurgraph(
     audio_embeddings: np.ndarray,
-    config: EgoGraphConfig | None = None,
-) -> EgoGraphResult:
+    config: RecurGraphConfig | None = None,
+) -> RecurGraphResult:
     """Estimate ego-noise-dominant scores for one robot's clip set.
 
     Inputs must be PE-AV audio embeddings from a single robot/recording scope.
@@ -116,16 +116,16 @@ def run_egograph(
     (ego-noise-dominant) class.
     """
 
-    cfg = config or EgoGraphConfig()
+    cfg = config or RecurGraphConfig()
     embeddings = _validate_embeddings(audio_embeddings)
-    anchor = self_anchor(embeddings)
-    similarities = np.asarray(embeddings @ anchor, dtype=np.float32)
+    centroid = embedding_centroid(embeddings)
+    similarities = np.asarray(embeddings @ centroid, dtype=np.float32)
     labels, lower, upper = _seed_labels(similarities, cfg.seed_ratio)
-    features = _graph_features(embeddings, anchor, cfg)
+    features = _graph_features(embeddings, centroid, cfg)
 
     neighbor_count = min(int(cfg.n_neighbors), len(features) - 1)
     if neighbor_count < 1:
-        raise ValueError("EgoGraph requires at least two clips")
+        raise ValueError("RecurGraph requires at least two clips")
     if not 0.0 < float(cfg.alpha) < 1.0:
         raise ValueError("alpha must be in (0, 1)")
 
@@ -152,13 +152,13 @@ def run_egograph(
 
     scores = probabilities[:, 1]
     selected = scores > float(cfg.selection_threshold)
-    return EgoGraphResult(
+    return RecurGraphResult(
         scores=scores,
         selected=selected,
         seed_labels=labels,
-        anchor_similarities=similarities,
+        centroid_similarities=similarities,
         class_probabilities=probabilities,
-        self_anchor=anchor,
+        embedding_centroid=centroid,
         diagnostics={
             "lower_seed_threshold": lower,
             "upper_seed_threshold": upper,
@@ -175,12 +175,12 @@ def run_egograph(
     )
 
 
-def run_egograph_by_group(
+def run_recurgraph_by_group(
     audio_embeddings: np.ndarray,
     groups: Sequence[str],
-    config: EgoGraphConfig | None = None,
-) -> dict[str, EgoGraphResult]:
-    """Run EgoGraph independently for every robot/group label."""
+    config: RecurGraphConfig | None = None,
+) -> dict[str, RecurGraphResult]:
+    """Run RecurGraph independently for every robot/group label."""
 
     embeddings = np.asarray(audio_embeddings, dtype=np.float32)
     labels = np.asarray(groups, dtype=str)
@@ -189,15 +189,15 @@ def run_egograph_by_group(
             "audio_embeddings and groups must have matching first dimensions"
         )
     return {
-        group: run_egograph(embeddings[labels == group], config)
+        group: run_recurgraph(embeddings[labels == group], config)
         for group in sorted(set(labels.tolist()))
     }
 
 
 __all__ = [
-    "EgoGraphConfig",
-    "EgoGraphResult",
-    "run_egograph",
-    "run_egograph_by_group",
-    "self_anchor",
+    "RecurGraphConfig",
+    "RecurGraphResult",
+    "embedding_centroid",
+    "run_recurgraph",
+    "run_recurgraph_by_group",
 ]

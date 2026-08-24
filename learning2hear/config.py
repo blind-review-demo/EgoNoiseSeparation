@@ -14,7 +14,7 @@ class TransferDiTSettings:
     lora_targets = ("wq", "wk", "wv", "wo", "w1", "w2", "w3", "output", "t_block")
 
 
-class EgoGraphSettings:
+class RecurGraphSettings:
     pe_av_model = "pe-av-large"
     pe_av_batch_size = 64
     waveform_peak = 1.0

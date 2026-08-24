@@ -12,18 +12,18 @@ import torch
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from learning2hear.config import EgoGraphSettings
+from learning2hear.config import RecurGraphSettings
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Extract PE-AV embeddings for an EgoGraph manifest."
+        description="Extract PE-AV embeddings for a RecurGraph manifest."
     )
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--audio-column", default="mix_path")
-    parser.add_argument("--model", default=EgoGraphSettings.pe_av_model)
-    parser.add_argument("--batch-size", type=int, default=EgoGraphSettings.pe_av_batch_size)
+    parser.add_argument("--model", default=RecurGraphSettings.pe_av_model)
+    parser.add_argument("--batch-size", type=int, default=RecurGraphSettings.pe_av_batch_size)
     parser.add_argument("--pe-av-repo", type=Path, default=None)
     parser.add_argument(
         "--device", default="cuda" if torch.cuda.is_available() else "cpu"
@@ -52,7 +52,7 @@ def peak_normalize(input_values: torch.Tensor) -> torch.Tensor:
     eps = torch.finfo(input_values.dtype).eps
     scale = torch.where(
         max_abs > eps,
-        float(EgoGraphSettings.waveform_peak) / max_abs.clamp_min(eps),
+        float(RecurGraphSettings.waveform_peak) / max_abs.clamp_min(eps),
         torch.ones_like(max_abs),
     )
     return input_values * scale

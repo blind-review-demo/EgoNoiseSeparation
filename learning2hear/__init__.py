@@ -1,12 +1,12 @@
 __all__ = [
-    "EgoGraphConfig",
-    "EgoGraphResult",
+    "RecurGraphConfig",
+    "RecurGraphResult",
     "LayerCrossResidualAdapter",
     "TransferDiT",
     "TransferDiTTransformer",
-    "run_egograph",
-    "run_egograph_by_group",
-    "self_anchor",
+    "embedding_centroid",
+    "run_recurgraph",
+    "run_recurgraph_by_group",
 ]
 
 
@@ -14,26 +14,26 @@ def __getattr__(name: str):
     if name not in __all__:
         raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
     if name in {
-        "EgoGraphConfig",
-        "EgoGraphResult",
-        "run_egograph",
-        "run_egograph_by_group",
-        "self_anchor",
+        "RecurGraphConfig",
+        "RecurGraphResult",
+        "embedding_centroid",
+        "run_recurgraph",
+        "run_recurgraph_by_group",
     }:
-        from learning2hear.egograph import (
-            EgoGraphConfig,
-            EgoGraphResult,
-            run_egograph,
-            run_egograph_by_group,
-            self_anchor,
+        from learning2hear.recurgraph import (
+            RecurGraphConfig,
+            RecurGraphResult,
+            embedding_centroid,
+            run_recurgraph,
+            run_recurgraph_by_group,
         )
 
         return {
-            "EgoGraphConfig": EgoGraphConfig,
-            "EgoGraphResult": EgoGraphResult,
-            "run_egograph": run_egograph,
-            "run_egograph_by_group": run_egograph_by_group,
-            "self_anchor": self_anchor,
+            "RecurGraphConfig": RecurGraphConfig,
+            "RecurGraphResult": RecurGraphResult,
+            "embedding_centroid": embedding_centroid,
+            "run_recurgraph": run_recurgraph,
+            "run_recurgraph_by_group": run_recurgraph_by_group,
         }[name]
     from learning2hear.models.transfer_dit import (
         LayerCrossResidualAdapter,

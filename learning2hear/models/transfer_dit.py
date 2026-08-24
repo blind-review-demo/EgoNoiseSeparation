@@ -150,7 +150,7 @@ class TransferDiTTransformer(DiT):
 
 
 class TransferDiT(FoundationSeparator):
-    """Prompt-free SAM-Audio separator used by Learning2HearWhileWalking."""
+    """Prompt-free SAM-Audio separator used by EgoNoiseSeparation."""
 
     config_cls = TransferDiTConfig
     revision = None

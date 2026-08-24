@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "learning2hearwhilewalking"
+name = "ego-noise-separation"
 version = "0.2.0"
-description = "EgoGraph mining and Transfer-DiT separation for legged robot audition."
+description = "RecurGraph mining and Transfer-DiT separation for legged robot audition."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "CC-BY-4.0" }

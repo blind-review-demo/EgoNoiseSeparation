@@ -1,13 +1,14 @@
-# Learning2HearWhileWalking
+# EgoNoiseSeparation
 
-This repository contains the public EgoGraph and Transfer-DiT implementations
+This repository contains the public RecurGraph and Transfer-DiT implementations
 used for ego-noise separation while walking. It does not vendor PE-AV or
 SAM-Audio source code or model weights.
 
 ## What is included
 
-- `learning2hear.run_egograph`: self-anchored graph propagation over PE-AV
-  audio embeddings, run independently for each robot.
+- `learning2hear.run_recurgraph`: recurrence-guided seed initialization and
+  graph-based score propagation over PE-AV audio embeddings, run independently
+  for each robot.
 - `learning2hear.models.TransferDiT`: a prompt-free SAM-Audio separator.
 - Bottleneck adapter layers at the original DiT cross-attention residual site,
   plus the rank-16 LoRA modules used by the released checkpoints.
@@ -81,13 +82,13 @@ python scripts/separate_audio.py \
 Transfer-DiT ignores text, video, and span prompts internally. The
 `--description` argument is kept only to satisfy SAM-Audio processor batching.
 
-## EgoGraph
+## RecurGraph
 
-EgoGraph first embeds every unlabeled adaptation clip with PE-AV. For each
-robot, it forms a self-anchor from the normalized mean embedding, uses the upper
-and lower fractions `rho = 0.10` as positive and negative seeds, and propagates
-the seed scores over a 64-nearest-neighbor graph in a 128-dimensional PCA
-space. Clips with a propagated score greater than `0.90` are selected for
+RecurGraph first embeds every unlabeled adaptation clip with PE-AV. For each
+robot, it forms an embedding centroid from the normalized mean embedding, uses
+the upper and lower fractions `rho = 0.10` as positive and negative seeds, and
+propagates the seed scores over a 64-nearest-neighbor graph in a 128-dimensional
+PCA space. Clips with a propagated score greater than `0.90` are selected for
 Transfer-DiT training.
 
 Set up the official PE-AV implementation and extract embeddings:
@@ -99,30 +100,30 @@ python scripts/extract_pe_av_embeddings.py \
   --output outputs/pe_av_embeddings.npz
 ```
 
-The manifest must contain `mix_path` and `robot` columns. Run EgoGraph:
+The manifest must contain `mix_path` and `robot` columns. Run RecurGraph:
 
 ```bash
-python scripts/run_egograph.py \
+python scripts/run_recurgraph.py \
   --manifest path/to/adaptation_manifest.csv \
   --embeddings outputs/pe_av_embeddings.npz \
-  --output outputs/egograph_scores.csv
+  --output outputs/recurgraph_scores.csv
 ```
 
-The output contains the self-anchor similarity, initial seed label, propagated
+The output contains the embedding-centroid similarity, initial seed label, propagated
 ego-noise-dominant score, and training-selection decision for every clip. PE-AV
-is used only to obtain embeddings; EgoGraph itself uses no text prompt.
+is used only to obtain embeddings; RecurGraph itself uses no text prompt.
 
 ## Repository layout
 
 ```text
 learning2hear/
   config.py
-  egograph.py
+  recurgraph.py
   models/transfer_dit.py
 scripts/
   setup_pe_av.sh
   extract_pe_av_embeddings.py
-  run_egograph.py
+  run_recurgraph.py
   setup_sam_audio.sh
   download_sam_audio_weights.py
   separate_audio.py
