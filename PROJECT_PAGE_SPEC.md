@@ -3,7 +3,7 @@
 ## Purpose
 
 This static page presents audio examples and real-world videos for the
-EgoGraph and Transfer-DiT experiment. The experiment and page-builder source
+RecurGraph and Transfer-DiT experiment. The experiment and page-builder source
 of truth is the private experiment repository; generated publication assets
 are written to this GitHub Pages repository. The repositories have separate
 source and publication roles and must not be treated as interchangeable copies.

@@ -1,6 +1,6 @@
-# Learning to Hear While Walking Project Page
+# EgoNoiseSeparation Project Page
 
-Static project page for EgoGraph and Transfer-DiT.
+Static project page for RecurGraph and Transfer-DiT.
 
 Directory roles:
 
@@ -10,7 +10,7 @@ Directory roles:
 
 Public page:
 
-https://blind-review-demo.github.io/EgoSep-Project/
+https://blind-review-demo.github.io/EgoNoiseSeparation/
 
 Open `index.html` through GitHub Pages or a local static server.
 
