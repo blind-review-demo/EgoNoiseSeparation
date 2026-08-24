@@ -6,7 +6,13 @@ Directory roles:
 
 - the private experiment repository: experiment data, page-builder code, and
   configuration source of truth
-- this repository: generated publication assets and the GitHub Pages site
+- the public `EgoNoiseSeparation` repository: source code on the `main` branch
+  and generated publication assets on the `gh-pages` branch represented by
+  this worktree
+
+Code repository:
+
+https://github.com/blind-review-demo/EgoNoiseSeparation
 
 Public page:
 

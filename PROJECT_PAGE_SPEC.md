@@ -5,8 +5,10 @@
 This static page presents audio examples and real-world videos for the
 RecurGraph and Transfer-DiT experiment. The experiment and page-builder source
 of truth is the private experiment repository; generated publication assets
-are written to this GitHub Pages repository. The repositories have separate
-source and publication roles and must not be treated as interchangeable copies.
+are written to the `gh-pages` branch of the public `EgoNoiseSeparation`
+repository. The public source code is maintained separately on the `main`
+branch. The private experiment repository, public source branch, and publication
+branch have separate roles and must not be treated as interchangeable copies.
 
 Overall evaluation tables report method-level means by robot and SNR, omit
 `clean_only`, round displayed values to two decimals, and bold the best value in
